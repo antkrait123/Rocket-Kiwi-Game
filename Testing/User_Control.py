@@ -1,10 +1,11 @@
 import arcade
 from arcade.color import GREEN, RED, SKY_BLUE, YELLOW
+from pyglet.window.key import SPACE
 
 # Constants
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
-BALL_SPEED = 7
+BALL_SPEED = 3
 
 class Ball:
     def __init__(self, position_x, change_x, position_y, change_y, radius, colour):
@@ -21,6 +22,15 @@ class Ball:
     def update(self):
         self.position_y = self.position_y + self.change_y 
         self.position_x = self.position_x + self.change_x
+
+        if self.position_x < self.radius:
+            self.position_x = self.radius
+        if self.position_x > SCREEN_WIDTH - self.radius:
+            self.position_x = SCREEN_WIDTH - self.radius
+        if self.position_y < self.radius:
+            self.position_y = self.radius
+        if self.position_y > SCREEN_HEIGHT - self.radius:
+            self.position_y = SCREEN_HEIGHT - self.radius 
 
 class MyGame(arcade.Window):
 
@@ -47,7 +57,7 @@ class MyGame(arcade.Window):
             self.ball.change_y = BALL_SPEED
         elif key == arcade.key.DOWN:
             self.ball.change_y = -BALL_SPEED
-
+        
     def on_key_release(self, key, modifiers):
         if key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.ball.change_x = 0
@@ -55,7 +65,6 @@ class MyGame(arcade.Window):
             self.ball.change_y = 0
 
 
-    
 def main():
     window = MyGame()
     arcade.run()
