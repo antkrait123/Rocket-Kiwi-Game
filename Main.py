@@ -8,7 +8,7 @@ SCREEN_HEIGHT = 600
 Kiwi_speed = 5
 kiwi_scaling = 0.18
 
-class Kiwi:
+'''class Kiwi:
     def __init__(self, position_x, change_x, position_y, change_y ):
         self.position_x = position_x
         self.change_x = change_x
@@ -28,7 +28,7 @@ class Kiwi:
         if self.position_y < self.radius:
             self.position_y = self.radius
         if self.position_y > SCREEN_HEIGHT - self.radius:
-            self.position_y = SCREEN_HEIGHT - self.radius 
+            self.position_y = SCREEN_HEIGHT - self.radius '''
 
 class MyGame(arcade.Window):
 
