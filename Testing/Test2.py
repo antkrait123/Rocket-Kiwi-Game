@@ -33,7 +33,7 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "User Controll")
         self.set_mouse_visible(False)
-        self.kiwi = Kiwi('./kiwi_default.png')
+        self.kiwi = Kiwi('Images/kiwi_default.png')
 
     def on_draw(self):
         arcade.set_background_color(SKY_BLUE)
