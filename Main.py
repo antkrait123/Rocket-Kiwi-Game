@@ -8,6 +8,8 @@ SCREEN_HEIGHT = 600
 Kiwi_speed = 5
 kiwi_scaling = 0.18
 
+GRAVITY = 1
+
 class Kiwi:
     def __init__(self, position_x, change_x, position_y, change_y ):
         self.position_x = position_x
@@ -16,8 +18,21 @@ class Kiwi:
         self.change_y = change_y
 
     def update(self):
+
+
+
         self.position_y = self.position_y + self.change_y 
         self.position_x = self.position_x + self.change_x
+
+        
+
+        if self.center_y == 255:
+            self.change_y = 0
+        else:
+            print('test')
+            self.change_y -= GRAVITY
+
+
 
         if self.position_x < self.radius:
             self.position_x = self.radius
@@ -28,6 +43,8 @@ class Kiwi:
         if self.position_y > SCREEN_HEIGHT:
             self.position_y = SCREEN_HEIGHT
         
+
+
 
 class MyGame(arcade.Window):
 
@@ -50,19 +67,21 @@ class MyGame(arcade.Window):
         self.kiwi.update()
 
     def on_key_press(self, key, modifiers):
+
+
         if key == arcade.key.LEFT:
             self.kiwi.change_x = -Kiwi_speed
         elif key == arcade.key.RIGHT:
             self.kiwi.change_x = Kiwi_speed
         elif key == arcade.key.UP:
-            self.kiwi.change_y = Kiwi_speed 
+            self.kiwi.change_y = Kiwi_speed
                    
     def on_key_release(self, key, modifiers):
         if key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.kiwi.change_x = 0
         elif key == arcade.key.UP:
-            self.kiwi.change_y = 0
-            self.kiwi.center_y = 255
+            pass
+            
     
         
 def main():
@@ -70,3 +89,14 @@ def main():
     arcade.run()
 
 main()
+
+
+
+
+
+
+
+
+
+
+

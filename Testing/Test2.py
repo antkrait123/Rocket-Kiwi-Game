@@ -23,7 +23,7 @@ class Kiwi(arcade.Sprite):
 
         print(self.center_x, self.center_y)
         if self.left:
-            self.center_x += self.speed_x
+            self.center_x -= self.speed_x
         if self.right:
             self.center_x += self.speed_x
     
@@ -53,8 +53,9 @@ class MyGame(arcade.Window):
         
         
     def on_key_release(self, key, modifiers):
-        if key == arcade.key.LEFT or key == arcade.key.RIGHT:
+        if key == arcade.key.LEFT:
             self.left = False
+        if key == arcade.key.RIGHT:
             self.right = False
 
 
