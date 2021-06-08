@@ -10,23 +10,6 @@ class Kiwi(arcade.Sprite):
         scaling_factor = 0.18
         super().__init__(image, scaling_factor)
 
-        self.center_x = 0
-        self.center_y = 0
-
-        self.speed_x = 5
-        self.speed_y = 5
-
-        self.left = False
-        self.right = False
-    
-    def update(self):
-
-        print(self.center_x, self.center_y)
-        if self.left:
-            self.center_x -= self.speed_x
-        if self.right:
-            self.center_x += self.speed_x
-    
 
 class MyGame(arcade.Window):
 
@@ -34,6 +17,8 @@ class MyGame(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "User Controll")
         self.set_mouse_visible(False)
         self.kiwi = Kiwi('Images/kiwi_default.png')
+        self.kiwi.center_x = SCREEN_WIDTH/2
+        self.kiwi.center_y = SCREEN_HEIGHT/2
 
     def on_draw(self):
         arcade.set_background_color(SKY_BLUE)
@@ -47,16 +32,16 @@ class MyGame(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.LEFT:
-            self.left = True
+            self.kiwi.change_x = -5
         elif key == arcade.key.RIGHT:
-            self.right = True
+            self.kiwi.change_x = 5
         
         
     def on_key_release(self, key, modifiers):
         if key == arcade.key.LEFT:
-            self.left = False
+            self.kiwi.change_x = 0
         if key == arcade.key.RIGHT:
-            self.right = False
+            self.kiwi.change_x = 0
 
 
 def main():
