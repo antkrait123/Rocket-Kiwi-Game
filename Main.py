@@ -4,7 +4,8 @@ from arcade.color import GREEN, RED, SKY_BLUE, YELLOW
 
 # Constants
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 600
+SCREEN_TITLE = "ROCKET KIWI"
 KIWI_SPEED = 5
 
 
@@ -12,14 +13,27 @@ class Kiwi(arcade.Sprite):
     def __init__(self, image):
         scaling_factor = 0.18
         super().__init__(image, scaling_factor)
-        
+
+class MenuScreen(arcade.View):
+
+    def on_show(self):
+        arcade.set_background_color(RED)
+    
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("MENU" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
+        arcade.draw_text("Click here to start...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 20, anchor_x="center")
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        game_view = GamePlay()
+        self.window.show_view(game_view)
 
 
-class MyGame(arcade.Window):
+class GamePlay(arcade.View):
 
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Rocket Kiwi")
-        self.set_mouse_visible(False)
+        super().__init__()
+        self.window.set_mouse_visible(False)
         self.kiwi = Kiwi('Images/kiwi_default.png')
         self.kiwi.center_x = SCREEN_WIDTH/2
         self.kiwi.center_y = SCREEN_HEIGHT/2
@@ -53,7 +67,9 @@ class MyGame(arcade.Window):
 
 
 def main():
-    window = MyGame()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = MenuScreen()
+    window.show_view(start_view)
     arcade.run()
 
 main()
