@@ -1,5 +1,5 @@
 import arcade
-from arcade.color import GREEN, RED, SKY_BLUE, YELLOW
+from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 
 
 # Constants
@@ -42,6 +42,7 @@ class GamePlay(arcade.View):
         arcade.set_background_color(SKY_BLUE)
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0,799, 200, 0, GREEN)
+        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.kiwi.draw()
     
     def on_update(self, delta_time):
