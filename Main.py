@@ -8,6 +8,8 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
 KIWI_SPEED = 5
 
+JUMP_SPEED = 5
+
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
@@ -27,6 +29,7 @@ class MenuScreen(arcade.View):
     def on_mouse_press(self, x, y, button, modifiers):
         game_view = GamePlay()
         self.window.show_view(game_view)
+        window.setup()
 
 
 class GamePlay(arcade.View):
@@ -36,7 +39,26 @@ class GamePlay(arcade.View):
         self.window.set_mouse_visible(False)
         self.kiwi = Kiwi('Images/kiwi_default.png')
         self.kiwi.center_x = SCREEN_WIDTH/2
-        self.kiwi.center_y = SCREEN_HEIGHT/2
+        self.kiwi.center_y = 250 #SCREEN_HEIGHT/2#
+
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.wall_list)
+
+
+
+
+
+    
+    def setup(self):
+        self.sprite_list = spritelist()
+
+
+
+
+
+
+
+
+
 
     def on_draw(self):
         arcade.set_background_color(SKY_BLUE)
@@ -46,16 +68,18 @@ class GamePlay(arcade.View):
     
     def on_update(self, delta_time):
         self.kiwi.update()
+        self.physics_engine.update()
         
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP:
-            self.kiwi.change_y = KIWI_SPEED
-        elif key == arcade.key.DOWN:
-            self.kiwi.change_y = -KIWI_SPEED
-        elif key == arcade.key.LEFT:
+        if key == arcade.key.UP and self.physics_engine.can_jump(y_distance=5):
+            #self.kiwi.change_y = KIWI_SPEED#
+            self.kiwi.change_y = JUMP_SPEED
+        #if key == arcade.key.DOWN:
+            #self.kiwi.change_y = -KIWI_SPEED
+        if key == arcade.key.LEFT:
             self.kiwi.change_x = -KIWI_SPEED
-        elif key == arcade.key.RIGHT:
+        if key == arcade.key.RIGHT:
             self.kiwi.change_x = KIWI_SPEED
         
         
