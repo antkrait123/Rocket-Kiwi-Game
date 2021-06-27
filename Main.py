@@ -8,13 +8,15 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
 KIWI_SPEED = 5
 
-JUMP_SPEED = 5
+#JUMP_SPEED = 5#
 
+BOX_SCALING = 5.5
 
-class Kiwi(arcade.Sprite):
-    def __init__(self, image):
-        scaling_factor = 0.18
-        super().__init__(image, scaling_factor)
+#class Kiwi(arcade.Sprite):
+#    def __init__(self, image):
+#        scaling_factor = 0.18
+#        super().__init__(image, scaling_factor)
+
 
 class MenuScreen(arcade.View):
 
@@ -36,12 +38,16 @@ class GamePlay(arcade.View):
 
     def __init__(self):
         super().__init__()
-        self.window.set_mouse_visible(False)
-        self.kiwi = Kiwi('Images/kiwi_default.png')
-        self.kiwi.center_x = SCREEN_WIDTH/2
-        self.kiwi.center_y = 250 #SCREEN_HEIGHT/2#
+        self.player_list = None
+        self.wall_list = None  
+        self.player_sprite = None
 
-        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.wall_list)
+        self.window.set_mouse_visible(False)
+        #self.kiwi = Kiwi('Images/kiwi_default.png')
+        
+
+
+        #self.physics_engine = arcade.PhysicsEnginePlatformer(self.kiwi, self.wall_list)
 
 
 
@@ -49,23 +55,41 @@ class GamePlay(arcade.View):
 
     
     def setup(self):
-        self.sprite_list = spritelist()
+        arcade.set_background_color(SKY_BLUE)
 
+        self.player_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
 
+        #create kiwi
+        self.player_sprite = arcade.Sprite("Images.kiwi_default.png", 0.18)
+        self.player_sprite.center_x = SCREEN_WIDTH/2
+        self.player_sprite.center_y = 250 #SCREEN_HEIGHT/2#
+        self.player_list.append(self.kiwi_sprite)
 
+       
+        # Manually create and position a box at 300, 200
+        wall = arcade.Sprite("Images/box.png", BOX_SCALING)
+        wall.center_x = 300
+        wall.center_y = 200
+        self.wall_list.append(wall)
 
+        # Manually create and position a box at 364, 200
+        wall = arcade.Sprite("Images/box.png", BOX_SCALING)
+        wall.center_x = 364
+        wall.center_y = 200
+        self.wall_list.append(wall)
 
-
-
-
+        
 
 
     def on_draw(self):
-        arcade.set_background_color(SKY_BLUE)
+        
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0,799, 200, 0, GREEN)
         arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.kiwi.draw()
+
+        self.wall_list.draw()
     
     def on_update(self, delta_time):
         self.kiwi.update()
