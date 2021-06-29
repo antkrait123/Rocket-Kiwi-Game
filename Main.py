@@ -6,7 +6,7 @@ from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
-KIWI_SPEED = 5
+MOVMENT_SPEED = 5
 
 #JUMP_SPEED = 5#
 
@@ -32,6 +32,7 @@ class MenuScreen(arcade.View):
         game_view = GamePlay()
         self.window.show_view(game_view)
         window.setup()
+        window.draw()
 
 
 class GamePlay(arcade.View):
@@ -47,7 +48,7 @@ class GamePlay(arcade.View):
         
 
 
-        #self.physics_engine = arcade.PhysicsEnginePlatformer(self.kiwi, self.wall_list)
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
 
 
 
@@ -64,7 +65,7 @@ class GamePlay(arcade.View):
         self.player_sprite = arcade.Sprite("Images.kiwi_default.png", 0.18)
         self.player_sprite.center_x = SCREEN_WIDTH/2
         self.player_sprite.center_y = 250 #SCREEN_HEIGHT/2#
-        self.player_list.append(self.kiwi_sprite)
+        self.player_list.append(self.player_sprite)
 
        
         # Manually create and position a box at 300, 200
@@ -79,41 +80,68 @@ class GamePlay(arcade.View):
         wall.center_y = 200
         self.wall_list.append(wall)
 
+    # --- Place boxes inside a loop
+        for x in range(173, 650, 64):
+            wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+            wall.center_x = x
+            wall.center_y = 350
+            self.wall_list.append(wall)
+
+        # --- Place walls with a list
+        coordinate_list = [[400, 500],
+                           [470, 500],
+                           [400, 570],
+                           [470, 570]]
+
+        # Loop through coordinates
+        for coordinate in coordinate_list:
+            wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+            wall.center_x = coordinate[0]
+            wall.center_y = coordinate[1]
+            self.wall_list.append(wall)
+
+        # Create the physics engine. Give it a reference to the player, and
+        # the walls we can't run into.
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.wall_list)
+
+
         
 
 
     def on_draw(self):
         
         arcade.start_render()
+        self.wall_list.draw()
+        self.player_list.draw()
         arcade.draw_lrtb_rectangle_filled(0,799, 200, 0, GREEN)
         arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
-        self.kiwi.draw()
+        #self.kiwi.draw()
 
-        self.wall_list.draw()
     
     def on_update(self, delta_time):
-        self.kiwi.update()
+        #self.kiwi.update()
         self.physics_engine.update()
         
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP and self.physics_engine.can_jump(y_distance=5):
-            #self.kiwi.change_y = KIWI_SPEED#
-            self.kiwi.change_y = JUMP_SPEED
-        #if key == arcade.key.DOWN:
-            #self.kiwi.change_y = -KIWI_SPEED
-        if key == arcade.key.LEFT:
-            self.kiwi.change_x = -KIWI_SPEED
-        if key == arcade.key.RIGHT:
-            self.kiwi.change_x = KIWI_SPEED
-        
-        
-    def on_key_release(self, key, modifiers):
-        if key == arcade.key.UP or arcade.key.DOWN:
-            self.kiwi.change_y = 0
-        if key == arcade.key.RIGHT or arcade.key.LEFT:
-            self.kiwi.change_x = 0
+        """Called whenever a key is pressed. """
 
+        if key == arcade.key.UP:
+            self.player_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            self.player_sprite.change_y = -MOVEMENT_SPEED
+        elif key == arcade.key.LEFT:
+            self.player_sprite.change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT:
+            self.player_sprite.change_x = MOVEMENT_SPEED
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.player_sprite.change_x = 0
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
