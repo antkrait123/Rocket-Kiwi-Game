@@ -15,7 +15,7 @@ SPRITE_SCALING_BOX  = 0.1
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
         scaling_factor = 0.18
-        super().__init__(image, scaling_factor)
+        super().__init__(image, scaling_factor, hit_box_algorithm="Detailed")
 
 class MenuScreen(arcade.View):
     def __init__(self):
@@ -62,12 +62,12 @@ class GamePlay(arcade.View):
         self.player_list.append(self.kiwi_sprite)
 
        
-        wall = arcade.Sprite("Images/box.png", BOX_SCALING)
+        wall = arcade.Sprite("Images/box.png", SPRITE_SCALING_BOX)
         wall.center_x = 300
         wall.center_y = 200
         self.wall_list.append(wall)
 
-        wall = arcade.Sprite("Images/box.png", BOX_SCALING)
+        wall = arcade.Sprite("Images/box.png", SPRITE_SCALING_BOX)
         wall.center_x = 450
         wall.center_y = 200
         self.wall_list.append(wall)
