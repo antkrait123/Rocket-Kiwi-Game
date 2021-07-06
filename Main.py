@@ -6,7 +6,7 @@ from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
-MOVEMENT_SPEED = 5
+MOVEMENT_SPEED = 10
 
 #JUMP_SPEED = 5#
 BOX_SCALING = 0.5
@@ -14,8 +14,20 @@ SPRITE_SCALING_BOX  = 0.1
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
-        scaling_factor = 0.18
-        super().__init__(image, scaling_factor, hit_box_algorithm="Detailed")
+        scaling_factor = 0.1
+
+        super().__init__(image, scaling_factor)
+
+    def update(self):
+        if self.center_y > SCREEN_HEIGHT - 25:
+            self.center_y = SCREEN_HEIGHT -25
+        if self.center_y < 25:
+            self.center_y = 25
+        if self.center_x > SCREEN_WIDTH -25:
+            self.center_x = SCREEN_WIDTH -25
+        if self.center_x < 25:
+            self.center_x = 25
+
 
 class MenuScreen(arcade.View):
     def __init__(self):
