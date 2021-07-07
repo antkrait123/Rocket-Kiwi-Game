@@ -8,6 +8,8 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 10
 
+VIEWPORT_MARGIN = 40
+
 #JUMP_SPEED = 5#
 BOX_SCALING = 0.5
 SPRITE_SCALING_BOX  = 0.1
@@ -103,6 +105,12 @@ class GamePlay(arcade.View):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list)
 
+
+        # Set the viewport boundaries
+        # These numbers set where we have 'scrolled' to.
+        self.view_left = 0
+        self.view_bottom = 0
+
     def on_draw(self):
         arcade.start_render()
         self.wall_list.draw()
@@ -116,6 +124,42 @@ class GamePlay(arcade.View):
     def on_update(self, delta_time):
         self.kiwi_sprite.update()
         self.physics_engine.update()
+
+
+
+        
+
+        changed = False
+
+        # Scroll left
+        left_boundary = self.view_left + VIEWPORT_MARGIN
+        if self.kiwi_sprite.left < left_boundary:
+            self.view_left -= left_boundary - self.kiwi_sprite.left
+            changed = True
+
+        # Scroll right
+        right_boundary = self.view_left + SCREEN_WIDTH - VIEWPORT_MARGIN
+        if self.kiwi_sprite.right > right_boundary:
+            self.view_left += self.kiwi_sprite.right - right_boundary
+            changed = True
+
+        
+
+        # Make sure our boundaries are integer values. While the view port does
+        # support floating point numbers, for this application we want every pixel
+        # in the view port to map directly onto a pixel on the screen. We don't want
+        # any rounding errors.
+        self.view_left = int(self.view_left)
+        self.view_bottom = int(self.view_bottom)
+
+        # If we changed the boundary values, update the view port to match
+        if changed:
+            arcade.set_viewport(self.view_left,
+                                SCREEN_WIDTH + self.view_left,
+                                self.view_bottom,
+                                SCREEN_HEIGHT + self.view_bottom)
+
+
         
 
     def on_key_press(self, key, modifiers):
