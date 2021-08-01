@@ -6,7 +6,7 @@ from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "ROCKET KIWI"
-MOVEMENT_SPEED = 10
+MOVEMENT_SPEED = 8
 SPRITE_SCALING_BOX  = 0.1
 
 class Kiwi(arcade.Sprite):
@@ -14,7 +14,7 @@ class Kiwi(arcade.Sprite):
         scaling_factor = 0.1
 
         super().__init__(image, scaling_factor)
-
+    
     def update(self):
         if self.center_y > SCREEN_HEIGHT - 25:
             self.center_y = SCREEN_HEIGHT -25
@@ -24,26 +24,8 @@ class Kiwi(arcade.Sprite):
             self.center_x = SCREEN_WIDTH -25
         if self.center_x < 25:
             self.center_x = 25
-            
 
-    def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP:
-            self.kiwi_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.kiwi_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
-            self.kiwi_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.kiwi_sprite.change_x = MOVEMENT_SPEED
-
-    def on_key_release(self, key, modifiers):
-        if key == arcade.key.UP or key == arcade.key.DOWN:
-            self.kiwi_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.kiwi_sprite.change_x = 0
-
-
-
+    
 
 class MenuScreen(arcade.View):
     def __init__(self):
@@ -86,17 +68,6 @@ class GamePlay(arcade.View):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list)
 
-
-
-    def on_draw(self):
-        arcade.start_render()
-        self.wall_list.draw()
-        self.player_list.draw()
-        arcade.set_background_color(SKY_BLUE)
-        arcade.draw_lrtb_rectangle_filled(0 ,800, 200, 0, GREEN)
-        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
-        self.kiwi_sprite.draw()
-
         # place boxes continually in sequence
         for x in range(0, 800, 100):
             wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
@@ -104,11 +75,11 @@ class GamePlay(arcade.View):
             wall.center_y = 500
             self.wall_list.append(wall)
 
-        #manualy place a box
-    ''' wall = arcade.Sprite("Images/box.png", SPRITE_SCALING_BOX)
+            #manualy place a tree
+        wall = arcade.Sprite("Images/nikau_tree.png", 0.25)
         wall.center_x = 300
-        wall.center_y = 200
-        self.wall_list.append(wall)'''
+        wall.center_y = 285
+        self.wall_list.append(wall)
 
         # place boxes at specified co-ordinates   
     ''' coordinate_list = [[400, 500],
@@ -122,12 +93,44 @@ class GamePlay(arcade.View):
             wall.center_y = coordinate[1]
             self.wall_list.append(wall)'''
 
-    
+
+
+    def on_draw(self):
+        arcade.start_render()
+        self.wall_list.draw()
+        self.player_list.draw()
+        arcade.set_background_color(SKY_BLUE)
+        arcade.draw_lrtb_rectangle_filled(0 ,800, 200, 0, GREEN)
+        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
+        self.kiwi_sprite.draw()
+
+
+
+
 
     def on_update(self, delta_time):
         self.kiwi_sprite.update()
         self.physics_engine.update()
 
+        # print(delta_time**-1)
+
+            
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.UP:
+            self.kiwi_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            self.kiwi_sprite.change_y = -MOVEMENT_SPEED
+        elif key == arcade.key.LEFT:
+            self.kiwi_sprite.change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT:
+            self.kiwi_sprite.change_x = MOVEMENT_SPEED
+
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.kiwi_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.kiwi_sprite.change_x = 0
 
         
 
