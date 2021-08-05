@@ -2,6 +2,8 @@
 import arcade
 from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 
+import random
+
 # Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -22,8 +24,15 @@ class Kiwi(arcade.Sprite):
             self.center_y = 25
         if self.center_x > SCREEN_WIDTH -25:
             self.center_x = SCREEN_WIDTH -25
-        if self.center_x < 25:
-            self.center_x = 25
+        #if self.center_x < 25:
+        #    self.center_x = 25
+
+        self.game_over()
+
+    def game_over(self):
+        if self.center_x < -20:
+            arcade.get_window().show_view(MenuScreen())
+
 
     
 
@@ -56,6 +65,8 @@ class GamePlay(arcade.View):
         self.window.set_mouse_visible(False)
         self.kiwi_sprite = Kiwi('Images/kiwi_default.png')
 
+        self.background_sprites = None
+
           
     def setup(self):
         self.player_list = arcade.SpriteList()
@@ -68,6 +79,10 @@ class GamePlay(arcade.View):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list)
 
+        self.background_sprites = arcade.SpriteList()
+
+        
+
         # place boxes continually in sequence
         for x in range(0, 800, 100):
             wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
@@ -75,7 +90,11 @@ class GamePlay(arcade.View):
             wall.center_y = 500
             self.wall_list.append(wall)
 
+        
+
             #manualy place a tree
+
+        self.background_sprites
         wall = arcade.Sprite("Images/nikau_tree.png", 0.25)
         wall.center_x = 300
         wall.center_y = 285
@@ -97,11 +116,11 @@ class GamePlay(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_lrtb_rectangle_filled(0 ,800, 200, 0, GREEN)
+        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
         arcade.set_background_color(SKY_BLUE)
-        arcade.draw_lrtb_rectangle_filled(0 ,800, 200, 0, GREEN)
-        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.kiwi_sprite.draw()
 
 
@@ -111,6 +130,16 @@ class GamePlay(arcade.View):
     def on_update(self, delta_time):
         self.kiwi_sprite.update()
         self.physics_engine.update()
+
+        for wall in self.wall_list:
+            wall.center_x -= 5
+            if wall.center_x < -50:
+                wall.kill()
+                sprites = ["images/box.png", ]
+                new_wall = arcade.Sprite(random.choice(sprites), SPRITE_SCALING_BOX)
+                new_wall.center_x = 850
+                new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
+                self.wall_list.append(new_wall)
 
         # print(delta_time**-1)
 
