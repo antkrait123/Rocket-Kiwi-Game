@@ -5,11 +5,12 @@ from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 import random
 
 # Constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1080
+SCREEN_HEIGHT = 720
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
 SPRITE_SCALING_BOX  = 0.1
+score = 1
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
@@ -31,7 +32,7 @@ class Kiwi(arcade.Sprite):
 
     def game_over(self):
         if self.center_x < -20:
-            arcade.get_window().show_view(MenuScreen())
+            arcade.get_window().show_view(EndScreen())
 
 
     
@@ -54,6 +55,9 @@ class MenuScreen(arcade.View):
         game_view.on_draw()
         self.window.show_view(game_view)
 
+
+
+
 class GamePlay(arcade.View):
 
     def __init__(self):
@@ -63,7 +67,7 @@ class GamePlay(arcade.View):
         self.kiwi_sprite = None
         self.physics_engine = None
         self.window.set_mouse_visible(False)
-        self.kiwi_sprite = Kiwi('Images/kiwi_default.png')
+        self.kiwi_sprite = Kiwi('Images/rocket_kiwi.png')
 
         self.background_sprites = None
 
@@ -83,8 +87,8 @@ class GamePlay(arcade.View):
 
         
 
-        # place boxes continually in sequence
-        for x in range(0, 800, 100):
+        #place boxes continually in sequence
+        for x in range(0, 1080, 100):
             wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
             wall.center_x = x
             wall.center_y = 500
@@ -92,7 +96,7 @@ class GamePlay(arcade.View):
 
         
 
-            #manualy place a tree
+        #manualy place a tree
 
         self.background_sprites
         wall = arcade.Sprite("Images/nikau_tree.png", 0.25)
@@ -113,10 +117,26 @@ class GamePlay(arcade.View):
             self.wall_list.append(wall)'''
 
 
+    '''def make_l_shape(self, x, y):
+        box_size = 51.2
+        wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+        wall.center_x = x
+        wall.center_y = y
+        self.wall_list.append(wall)
+        wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+        wall.center_x = x + box_size
+        wall.center_y = y
+        self.wall_list.append(wall)
+        for i in range(5):
+            wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+            wall.center_x = x + box_size * 2
+            wall.center_y = y + box_size * i
+            self.wall_list.append(wall) '''
+
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrtb_rectangle_filled(0 ,800, 200, 0, GREEN)
+        arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
         arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
@@ -126,20 +146,30 @@ class GamePlay(arcade.View):
 
 
 
-
     def on_update(self, delta_time):
         self.kiwi_sprite.update()
         self.physics_engine.update()
+            
+        '''for wall in self.wall_list:
+            wall.center_x -= 5
+            shape_chance = random.random()
+            if shape_chance < 0.05:
+                self.make_l_shape(850, random.randint(0, SCREEN_HEIGHT))
+            else: '''
+
+
 
         for wall in self.wall_list:
-            wall.center_x -= 5
+            wall.center_x -= (score * 5)
             if wall.center_x < -50:
                 wall.kill()
                 sprites = ["images/box.png", ]
                 new_wall = arcade.Sprite(random.choice(sprites), SPRITE_SCALING_BOX)
-                new_wall.center_x = 850
+                new_wall.center_x = 1100
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
+
+
 
         # print(delta_time**-1)
 
@@ -162,6 +192,24 @@ class GamePlay(arcade.View):
             self.kiwi_sprite.change_x = 0
 
         
+class EndScreen(arcade.View):
+    def __init__(self):
+        super().__init__()
+    
+    def on_show(self):
+        arcade.set_background_color(RED)
+        self.window.set_mouse_visible(True)
+    
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("Game Over!" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
+        arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 20, anchor_x="center")
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        game_view = GamePlay()
+        game_view.setup()
+        game_view.on_draw()
+        self.window.show_view(game_view)
 
  
 

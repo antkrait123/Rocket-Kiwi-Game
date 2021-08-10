@@ -1,0 +1,23 @@
+'''def make_l_shape(self, x, y):
+        box_size = 51.2
+        wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+        wall.center_x = x
+        wall.center_y = y
+        self.wall_list.append(wall)
+        wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+        wall.center_x = x + box_size
+        wall.center_y = y
+        self.wall_list.append(wall)
+        for i in range(5):
+            wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+            wall.center_x = x + box_size * 2
+            wall.center_y = y + box_size * i
+            self.wall_list.append(wall) '''
+
+
+'''for wall in self.wall_list:
+            wall.center_x -= 5
+            shape_chance = random.random()
+            if shape_chance < 0.05:
+                self.make_l_shape(850, random.randint(0, SCREEN_HEIGHT))
+            else: '''

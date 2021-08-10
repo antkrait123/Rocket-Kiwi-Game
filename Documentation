@@ -6,3 +6,9 @@ https://stackoverflow.com/questions/55167496/infinite-scrolling-background-in-py
 
 have background sound track
 tempo increases as score/time increases
+
+idea instead of randomly generating boxes;
+have set functions for shapes eg. horse shoe, wall, zig zag
+then radomly generate the box shapes
+
+have trees and rocks as ground based constant objetcs
