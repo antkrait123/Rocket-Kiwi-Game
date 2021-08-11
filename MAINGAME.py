@@ -1,7 +1,6 @@
 #imports
 import arcade
 from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
-
 import random
 
 # Constants
@@ -10,7 +9,6 @@ SCREEN_HEIGHT = 720
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
 SPRITE_SCALING_BOX  = 0.1
-score = 1
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
@@ -68,7 +66,8 @@ class GamePlay(arcade.View):
         self.physics_engine = None
         self.window.set_mouse_visible(False)
         self.kiwi_sprite = Kiwi('Images/rocket_kiwi.png')
-
+        self.score = 0
+        self.gspeed = 1
         self.background_sprites = None
 
           
@@ -85,6 +84,8 @@ class GamePlay(arcade.View):
 
         self.background_sprites = arcade.SpriteList()
 
+        self.score = 0
+        self.gspeed = 1
         
 
         #place boxes continually in sequence
@@ -137,11 +138,11 @@ class GamePlay(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
-        arcade.draw_lrtb_rectangle_filled(550,625,250,200, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
         arcade.set_background_color(SKY_BLUE)
         self.kiwi_sprite.draw()
+        arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 50, arcade.color.BLACK, font_size = 35 )
 
 
 
@@ -158,17 +159,36 @@ class GamePlay(arcade.View):
             else: '''
 
 
-
         for wall in self.wall_list:
-            wall.center_x -= (score * 5)
+            wall.center_x -= (self.gspeed)
             if wall.center_x < -50:
                 wall.kill()
-                sprites = ["images/box.png", ]
+                sprites = ["images/box.png", 
+                "images/small_rock.png", 
+                "images/cabbage_tree.png", 
+                "images/Nikau_tree.png", 
+                "images/rock.png"]
                 new_wall = arcade.Sprite(random.choice(sprites), SPRITE_SCALING_BOX)
                 new_wall.center_x = 1100
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
+                self.score += 1
 
+        if self.score < 25:
+            self.gspeed = 3
+        if self.score > 25:
+            self.gspeed = 5
+        if self.score > 50:
+            self.gspeed = 7 
+        if self.score > 100:
+            self.gspeed = 10 
+        if self.score > 250:
+            self.gspeed = 15
+
+        # think of way to make condensed formular eg. if 2^n = true then gspeed =+2
+        '''n = [1,2,3,4,5,6,7,8,9,10]
+        if self.score == 2**(n):
+            self.gspeed = self.gspeed * 2 '''
 
 
         # print(delta_time**-1)
