@@ -8,7 +8,12 @@ SCREEN_WIDTH = 1080
 SCREEN_HEIGHT = 720
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
-SPRITE_SCALING_BOX  = 0.1
+
+#SPRITE_SCALING_BOX  = 0.1
+SPRITE_SCLING_CABBAGETREE = 0.2
+SPRITE_SCALING_NIKAUTREE = 0.25
+SPRITE_SCAING_ROCK = 0.15
+SPRITE_SCALING_SMALLROCK = 0.1
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
@@ -90,7 +95,7 @@ class GamePlay(arcade.View):
 
         #place boxes continually in sequence
         for x in range(0, 1080, 100):
-            wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
+            wall = arcade.Sprite("images/piskelbox.png", 0.07)
             wall.center_x = x
             wall.center_y = 500
             self.wall_list.append(wall)
@@ -100,7 +105,7 @@ class GamePlay(arcade.View):
         #manualy place a tree
 
         self.background_sprites
-        wall = arcade.Sprite("Images/nikau_tree.png", 0.25)
+        wall = arcade.Sprite("Images/Nikau_tree.png", 0.25)
         wall.center_x = 300
         wall.center_y = 285
         self.wall_list.append(wall)
@@ -158,21 +163,21 @@ class GamePlay(arcade.View):
                 self.make_l_shape(850, random.randint(0, SCREEN_HEIGHT))
             else: '''
 
-
         for wall in self.wall_list:
             wall.center_x -= (self.gspeed)
             if wall.center_x < -50:
                 wall.kill()
-                sprites = ["images/box.png", 
-                "images/small_rock.png", 
-                "images/cabbage_tree.png", 
-                "images/Nikau_tree.png", 
-                "images/rock.png"]
-                new_wall = arcade.Sprite(random.choice(sprites), SPRITE_SCALING_BOX)
-                new_wall.center_x = 1100
+                sprites = ["images/piskelbox.png",] 
+                #"images/Nikau_tree.png", 
+                #"images/cabbage_tree.png", 
+                #"images/rock.png", 
+                #"images/small_rock.png"]
+                new_wall = arcade.Sprite(random.choice(sprites), 0.07)
+                new_wall.center_x = 1300
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
                 self.score += 1
+
 
         if self.score < 25:
             self.gspeed = 3
