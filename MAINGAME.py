@@ -2,12 +2,14 @@
 import arcade
 from arcade.color import BLACK, GREEN, RED, SKY_BLUE, YELLOW
 import random
+import math
 
 # Constants
 SCREEN_WIDTH = 1080
 SCREEN_HEIGHT = 720
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
+BULLET_SPEED = 8
 
 #SPRITE_SCALING_BOX  = 0.1
 SPRITE_SCLING_CABBAGETREE = 0.2
@@ -67,6 +69,7 @@ class GamePlay(arcade.View):
         super().__init__()
         self.player_list = None
         self.wall_list = None  
+        self.bullet_list = None
         self.kiwi_sprite = None
         self.physics_engine = None
         self.window.set_mouse_visible(False)
@@ -79,6 +82,7 @@ class GamePlay(arcade.View):
     def setup(self):
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList()
 
         self.kiwi_sprite.center_x = SCREEN_WIDTH/2
         self.kiwi_sprite.center_y = SCREEN_HEIGHT/2
@@ -103,12 +107,8 @@ class GamePlay(arcade.View):
         
 
         #manualy place a tree
-
-        self.background_sprites
-        wall = arcade.Sprite("Images/Nikau_tree.png", 0.25)
-        wall.center_x = 300
-        wall.center_y = 285
-        self.wall_list.append(wall)
+        #("images/Nikau_tree.png", 0.2)
+       
 
         # place boxes at specified co-ordinates   
     ''' coordinate_list = [[400, 500],
@@ -145,16 +145,59 @@ class GamePlay(arcade.View):
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
         self.wall_list.draw()
         self.player_list.draw()
+        self.bullet_list.draw()
         arcade.set_background_color(SKY_BLUE)
         self.kiwi_sprite.draw()
         arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 50, arcade.color.BLACK, font_size = 35 )
 
+
+            
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.UP:
+            self.kiwi_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.DOWN:
+            self.kiwi_sprite.change_y = -MOVEMENT_SPEED
+        elif key == arcade.key.LEFT:
+            self.kiwi_sprite.change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT:
+            self.kiwi_sprite.change_x = MOVEMENT_SPEED
+        elif key == arcade.key.SPACE:
+            bullet = arcade.Sprite("images/pellet.png", 0.0075)
+            start_x = self.kiwi_sprite.center_x + 25
+            start_y = self.kiwi_sprite.center_y + 10
+            bullet.center_x = start_x
+            bullet.center_y = start_y
+            bullet.change_x =  BULLET_SPEED
+            self.bullet_list.append(bullet)
+
+
+
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.UP or key == arcade.key.DOWN:
+            self.kiwi_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.kiwi_sprite.change_x = 0
 
 
 
     def on_update(self, delta_time):
         self.kiwi_sprite.update()
         self.physics_engine.update()
+        self.bullet_list.update()
+
+        #for bullet in self.bullet_list:
+            #hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
+
+            #if len(hit_list) > 0:
+            #    bullet.remove_from_sprite_lists()
+
+            #for coin in hit_list:
+            #    enemy.remove_from_sprite_lists()
+            #    self.score += 1
+
+            #if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
+            #    bullet.remove_from_sprite_lists()
             
         '''for wall in self.wall_list:
             wall.center_x -= 5
@@ -177,6 +220,8 @@ class GamePlay(arcade.View):
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
                 self.score += 1
+        
+
 
 
         if self.score < 25:
@@ -198,25 +243,8 @@ class GamePlay(arcade.View):
 
         # print(delta_time**-1)
 
-            
 
-    def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP:
-            self.kiwi_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.kiwi_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
-            self.kiwi_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.kiwi_sprite.change_x = MOVEMENT_SPEED
 
-    def on_key_release(self, key, modifiers):
-        if key == arcade.key.UP or key == arcade.key.DOWN:
-            self.kiwi_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
-            self.kiwi_sprite.change_x = 0
-
-        
 class EndScreen(arcade.View):
     def __init__(self):
         super().__init__()
