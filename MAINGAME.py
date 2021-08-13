@@ -40,8 +40,6 @@ class Kiwi(arcade.Sprite):
             arcade.get_window().show_view(EndScreen())
 
 
-    
-
 class MenuScreen(arcade.View):
     def __init__(self):
         super().__init__()
@@ -68,6 +66,7 @@ class GamePlay(arcade.View):
     def __init__(self):
         super().__init__()
         self.player_list = None
+        self.enemy_list = None
         self.wall_list = None  
         self.bullet_list = None
         self.kiwi_sprite = None
@@ -83,6 +82,7 @@ class GamePlay(arcade.View):
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList()
 
         self.kiwi_sprite.center_x = SCREEN_WIDTH/2
         self.kiwi_sprite.center_y = SCREEN_HEIGHT/2
@@ -104,7 +104,10 @@ class GamePlay(arcade.View):
             wall.center_y = 500
             self.wall_list.append(wall)
 
-        
+        enemy = arcade.Sprite("images/possum.png", 0.33)
+        enemy.center_x = x
+        enemy.center_y = 200
+        self.enemy_list.append(enemy)
 
         #manualy place a tree
         #("images/Nikau_tree.png", 0.2)
@@ -145,6 +148,7 @@ class GamePlay(arcade.View):
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
         self.wall_list.draw()
         self.player_list.draw()
+        self.enemy_list.draw()
         self.bullet_list.draw()
         arcade.set_background_color(SKY_BLUE)
         self.kiwi_sprite.draw()
@@ -185,19 +189,24 @@ class GamePlay(arcade.View):
         self.kiwi_sprite.update()
         self.physics_engine.update()
         self.bullet_list.update()
+        self.enemy_list.update()
 
-        #for bullet in self.bullet_list:
-            #hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
+        for bullet in self.bullet_list:
+            hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
 
-            #if len(hit_list) > 0:
-            #    bullet.remove_from_sprite_lists()
+            if len(hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+                for enemy in hit_list:
+                    enemy.kill()
+                    new_enemy = arcade.Sprite("images/possum.png", 0.33)
+                    new_enemy.center_x = 4000
+                    new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
+                    self.enemy_list.append(new_enemy)
+                    self.score += 10
+                
 
-            #for coin in hit_list:
-            #    enemy.remove_from_sprite_lists()
-            #    self.score += 1
-
-            #if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
-            #    bullet.remove_from_sprite_lists()
+            if bullet.center_x > SCREEN_WIDTH - 10 or bullet.center_y > SCREEN_HEIGHT:
+                bullet.remove_from_sprite_lists()
             
         '''for wall in self.wall_list:
             wall.center_x -= 5
@@ -210,7 +219,7 @@ class GamePlay(arcade.View):
             wall.center_x -= (self.gspeed)
             if wall.center_x < -50:
                 wall.kill()
-                sprites = ["images/piskelbox.png",] 
+                sprites = ["images/piskelbox.png" ] 
                 #"images/Nikau_tree.png", 
                 #"images/cabbage_tree.png", 
                 #"images/rock.png", 
@@ -220,6 +229,15 @@ class GamePlay(arcade.View):
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
                 self.score += 1
+
+        for enemy in self.enemy_list:
+            enemy.center_x -= (self.gspeed)
+            if enemy.center_x < -50:
+                enemy.kill()
+                new_enemy = arcade.Sprite("images/possum.png", 0.33)
+                new_enemy.center_x = 4000
+                new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
+                self.enemy_list.append(new_enemy)
         
 
 
@@ -256,7 +274,8 @@ class EndScreen(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("Game Over!" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
-        arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 20, anchor_x="center")
+        # arcade.draw_text(f"YOUR SCORE: {self.score} ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 50, anchor_x="center")
+        arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 100, arcade.color.BLACK, font_size = 20, anchor_x="center")
 
     def on_mouse_press(self, x, y, button, modifiers):
         game_view = GamePlay()
