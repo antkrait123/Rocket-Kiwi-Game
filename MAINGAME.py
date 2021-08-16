@@ -20,6 +20,7 @@ SPRITE_SCALING_SMALLROCK = 0.1
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
         scaling_factor = 0.1
+        self.endgame_noise = arcade.load_sound("Sounds/Game_over_sound.mp3")
 
         super().__init__(image, scaling_factor)
     
@@ -34,12 +35,15 @@ class Kiwi(arcade.Sprite):
             self.game_over()
 
     def game_over(self):
+        arcade.play_sound(self.endgame_noise)
         arcade.get_window().show_view(EndScreen())
 
 
 class MenuScreen(arcade.View):
     def __init__(self):
         super().__init__()
+        #self.music_sound = arcade.load_sound("")
+        
 
     def on_show(self):
         arcade.set_background_color(RED)
@@ -54,6 +58,7 @@ class MenuScreen(arcade.View):
         game_view.setup()
         game_view.on_draw()
         self.window.show_view(game_view)
+        #arcade.play_sound(self.music_sound)
 
 
 
@@ -73,6 +78,10 @@ class GamePlay(arcade.View):
         self.score = 0
         self.gspeed = 1
         self.background_sprites = None
+
+        #load sounds & tunes
+        self.shoot_sound = arcade.load_sound("Sounds/pop.mp3")
+        #self.crash_sound = arcade.load_sound("")
 
           
     def setup(self):
@@ -164,6 +173,7 @@ class GamePlay(arcade.View):
         elif key == arcade.key.RIGHT:
             self.kiwi_sprite.change_x = MOVEMENT_SPEED
         elif key == arcade.key.SPACE:
+            arcade.play_sound(self.shoot_sound)
             bullet = arcade.Sprite("images/pellet.png", 0.0075)
             start_x = self.kiwi_sprite.center_x + 25
             start_y = self.kiwi_sprite.center_y + 10
@@ -278,7 +288,7 @@ class EndScreen(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("Game Over!" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
-        # arcade.draw_text(f"YOUR SCORE: {self.score} ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 50, anchor_x="center")
+        #arcade.draw_text(f"YOUR SCORE: {self.score} ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 50, anchor_x="center")
         arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 100, arcade.color.BLACK, font_size = 20, anchor_x="center")
 
     def on_mouse_press(self, x, y, button, modifiers):
