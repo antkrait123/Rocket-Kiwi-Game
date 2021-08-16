@@ -30,14 +30,11 @@ class Kiwi(arcade.Sprite):
             self.center_y = 25
         if self.center_x > SCREEN_WIDTH -25:
             self.center_x = SCREEN_WIDTH -25
-        #if self.center_x < 25:
-        #    self.center_x = 25
-
-        self.game_over()
+        if self.center_x < -20:
+            self.game_over()
 
     def game_over(self):
-        if self.center_x < -20:
-            arcade.get_window().show_view(EndScreen())
+        arcade.get_window().show_view(EndScreen())
 
 
 class MenuScreen(arcade.View):
@@ -239,6 +236,9 @@ class GamePlay(arcade.View):
                 new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.enemy_list.append(new_enemy)
         
+        enemy_hit_list = arcade.check_for_collision_with_list(self.kiwi_sprite, self.enemy_list)
+        for enemy in enemy_hit_list:
+            self.game_over()
 
 
 
@@ -260,6 +260,10 @@ class GamePlay(arcade.View):
 
 
         # print(delta_time**-1)
+    
+    def game_over(self):
+        arcade.get_window().show_view(EndScreen())
+
 
 
 
