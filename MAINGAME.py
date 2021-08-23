@@ -10,17 +10,18 @@ SCREEN_HEIGHT = 720
 SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
 BULLET_SPEED = 8
+global score
+score = 0
 
 #SPRITE_SCALING_BOX  = 0.1
-SPRITE_SCLING_CABBAGETREE = 0.2
-SPRITE_SCALING_NIKAUTREE = 0.25
-SPRITE_SCAING_ROCK = 0.15
-SPRITE_SCALING_SMALLROCK = 0.1
+#SPRITE_SCALING_CABBAGETREE = 0.2
+#SPRITE_SCALING_NIKAUTREE = 0.25
+#SPRITE_SCAING_ROCK = 0.15
+#SPRITE_SCALING_SMALLROCK = 0.1
 
 class Kiwi(arcade.Sprite):
     def __init__(self, image):
         scaling_factor = 0.1
-        self.endgame_noise = arcade.load_sound("Sounds/Game_over_sound.mp3")
 
         super().__init__(image, scaling_factor)
     
@@ -31,12 +32,7 @@ class Kiwi(arcade.Sprite):
             self.center_y = 25
         if self.center_x > SCREEN_WIDTH -25:
             self.center_x = SCREEN_WIDTH -25
-        if self.center_x < -20:
-            self.game_over()
-
-    def game_over(self):
-        arcade.play_sound(self.endgame_noise)
-        arcade.get_window().show_view(EndScreen())
+        
 
 
 class MenuScreen(arcade.View):
@@ -75,16 +71,19 @@ class GamePlay(arcade.View):
         self.physics_engine = None
         self.window.set_mouse_visible(False)
         self.kiwi_sprite = Kiwi('Images/rocket_kiwi.png')
-        self.score = 0
-        self.gspeed = 1
+        self.score = None
+        self.gspeed = None
         self.background_sprites = None
 
         #load sounds & tunes
         self.shoot_sound = arcade.load_sound("Sounds/pop.mp3")
+        self.endgame_noise = arcade.load_sound("Sounds/Game_over_sound.mp3")
         #self.crash_sound = arcade.load_sound("")
 
           
     def setup(self):
+        #arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 20, anchor_x="center")
+        #arcade.draw_text("Use [SPACE] to shoot", 100, 550, arcade.color.BLACK, font_size = 20, anchor_x="center")
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
@@ -100,7 +99,7 @@ class GamePlay(arcade.View):
         self.background_sprites = arcade.SpriteList()
 
         self.score = 0
-        self.gspeed = 1
+        self.gspeed = 3
         
 
         #place boxes continually in sequence
@@ -116,7 +115,22 @@ class GamePlay(arcade.View):
         self.enemy_list.append(enemy)
 
         #manualy place a tree
-        #("images/Nikau_tree.png", 0.2)
+        '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
+        tree.center_x = 800
+        tree.center_y = 200
+        self.wall_list.append(tree)'''
+
+        #give users instructions
+        '''instructions = arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
+        instructions.center_x = 1000
+        instructions. center_y = 650
+        self.wall_list.append(instructions)
+
+        instructions2 = arcade.draw_text("Use [SPACE] to shoot" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
+        instructions2.center_x = 1000
+        instructions2. center_y = 590
+        self.wall_list.append(instructions2)'''
+        
        
 
         # place boxes at specified co-ordinates   
@@ -152,6 +166,7 @@ class GamePlay(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
+        #arcade.draw_lrtb_rectangle_filled(300, 350, 200, 150, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
@@ -206,7 +221,7 @@ class GamePlay(arcade.View):
                 for enemy in hit_list:
                     enemy.kill()
                     new_enemy = arcade.Sprite("images/possum.png", 0.33)
-                    new_enemy.center_x = 4000
+                    new_enemy.center_x = 3000
                     new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
                     self.enemy_list.append(new_enemy)
                     self.score += 10
@@ -250,36 +265,25 @@ class GamePlay(arcade.View):
         for enemy in enemy_hit_list:
             self.game_over()
 
+        if self.kiwi_sprite.center_x < -20:
+            self.game_over()
 
 
-        if self.score < 25:
-            self.gspeed = 3
-        if self.score > 25:
-            self.gspeed = 5
-        if self.score > 50:
-            self.gspeed = 7 
-        if self.score > 100:
-            self.gspeed = 10 
-        if self.score > 250:
-            self.gspeed = 15
+        self.gspeed += delta_time/10
+        print(self.gspeed)
 
-        # think of way to make condensed formular eg. if 2^n = true then gspeed =+2
-        '''n = [1,2,3,4,5,6,7,8,9,10]
-        if self.score == 2**(n):
-            self.gspeed = self.gspeed * 2 '''
-
-
-        # print(delta_time**-1)
     
     def game_over(self):
-        arcade.get_window().show_view(EndScreen())
+        arcade.play_sound(self.endgame_noise)
+        arcade.get_window().show_view(EndScreen(self.score))
 
 
 
 
 class EndScreen(arcade.View):
-    def __init__(self):
+    def __init__(self, score):
         super().__init__()
+        self.score = score
     
     def on_show(self):
         arcade.set_background_color(RED)
@@ -287,10 +291,9 @@ class EndScreen(arcade.View):
     
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("Game Over!" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
-        #arcade.draw_text(f"YOUR SCORE: {self.score} ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 50, anchor_x="center")
-        arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 100, arcade.color.BLACK, font_size = 20, anchor_x="center")
-
+        arcade.draw_text("GAME OVER!" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 75, anchor_x="center")
+        arcade.draw_text(f"Your Score: {self.score} ", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 75, arcade.color.BLACK, font_size = 50, anchor_x="center")
+        arcade.draw_text("Click here to play again...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 120, arcade.color.BLACK, font_size = 20, anchor_x="center")
     def on_mouse_press(self, x, y, button, modifiers):
         game_view = GamePlay()
         game_view.setup()
