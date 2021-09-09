@@ -113,10 +113,10 @@ class GamePlay(arcade.View):
         self.enemy_list.append(enemy)
 
         #manualy place a tree
-        '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
-        tree.center_x = 800
+        tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
+        tree.center_x = 200
         tree.center_y = 200
-        self.wall_list.append(tree)'''
+        self.background_sprites.append(tree)
 
         #give users instructions
         '''instructions = arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
@@ -164,6 +164,7 @@ class GamePlay(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
+        self.background_sprites.draw()
         #arcade.draw_lrtb_rectangle_filled(300, 350, 200, 150, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
@@ -249,6 +250,22 @@ class GamePlay(arcade.View):
                 new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.wall_list.append(new_wall)
                 self.score += 1
+        
+        for background in self.background_sprites:
+            background.center_x -= (self.gspeed)
+            if False and background.center_x < -50:
+                wall.kill()
+                sprites = ["images/piskelbox.png" ] 
+                #"images/Nikau_tree.png", 
+                #"images/cabbage_tree.png", 
+                #"images/rock.png", 
+                #"images/small_rock.png"]
+                new_wall = arcade.Sprite(random.choice(sprites), 0.07)
+                new_wall.center_x = 1300
+                new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
+                self.wall_list.append(new_wall)
+                self.score += 1
+
 
         for enemy in self.enemy_list:
             enemy.center_x -= (self.gspeed)
