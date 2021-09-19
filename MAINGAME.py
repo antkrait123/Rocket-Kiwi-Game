@@ -11,6 +11,8 @@ SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
 BULLET_SPEED = 10
 
+#background_images = []
+
 #SPRITE_SCALING_BOX  = 0.1
 #SPRITE_SCALING_CABBAGETREE = 0.2
 #SPRITE_SCALING_NIKAUTREE = 0.25
@@ -72,6 +74,7 @@ class GamePlay(arcade.View):
         self.score = None
         self.gspeed = None
         self.background_sprites = None
+        self.backgroundsky_sprites = None
 
         #load sounds & tunes
         self.shoot_sound = arcade.load_sound("Sounds/pop.mp3")
@@ -95,6 +98,7 @@ class GamePlay(arcade.View):
         self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list)
 
         self.background_sprites = arcade.SpriteList()
+        self.backgroundsky_sprites = arcade.SpriteList()
 
         self.score = 0
         self.gspeed = 3
@@ -113,10 +117,16 @@ class GamePlay(arcade.View):
         self.enemy_list.append(enemy)
 
         #manualy place a tree
-        tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
-        tree.center_x = 200
+        '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
+        tree.center_x = 100
         tree.center_y = 200
-        self.background_sprites.append(tree)
+        self.background_sprites.append(tree)'''
+
+        sun = arcade.Sprite("images/sun.png", 20)
+        sun.center_x = 1000
+        sun.center_y = 600
+        self.backgroundsky_sprites.append(sun)
+
 
         #give users instructions
         '''instructions = arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
@@ -211,6 +221,7 @@ class GamePlay(arcade.View):
         self.physics_engine.update()
         self.bullet_list.update()
         self.enemy_list.update()
+        self.background_sprites.update()
 
         for bullet in self.bullet_list:
             hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
@@ -251,20 +262,18 @@ class GamePlay(arcade.View):
                 self.wall_list.append(new_wall)
                 self.score += 1
         
-        for background in self.background_sprites:
+        '''for background in self.background_sprites:
             background.center_x -= (self.gspeed)
-            if False and background.center_x < -50:
-                wall.kill()
-                sprites = ["images/piskelbox.png" ] 
-                #"images/Nikau_tree.png", 
-                #"images/cabbage_tree.png", 
-                #"images/rock.png", 
-                #"images/small_rock.png"]
-                new_wall = arcade.Sprite(random.choice(sprites), 0.07)
-                new_wall.center_x = 1300
-                new_wall.center_y = random.randint(0, SCREEN_HEIGHT)
-                self.wall_list.append(new_wall)
-                self.score += 1
+            if  background.center_x < -50:
+                background.kill()
+                sprites = [" images/Nikau_tree.png", 
+                "images/cabbage_tree.png", 
+                "images/rock.png", 
+                "images/small_rock.png"]
+                new_background = arcade.Sprite(random.choice(sprites), 0.1)
+                new_background.center_x = 1500
+                new_background.center_y = random.randint(10, 150)
+                self.background_sprites.append(new_background)'''
 
 
         for enemy in self.enemy_list:
