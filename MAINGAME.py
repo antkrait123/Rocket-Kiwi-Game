@@ -122,10 +122,19 @@ class GamePlay(arcade.View):
         tree.center_y = 200
         self.background_sprites.append(tree)'''
 
-        sun = arcade.Sprite("images/sun.png", 20)
-        sun.center_x = 1000
+        sun = arcade.Sprite("images/sun.png", 0.06)
+        sun.center_x = 980
         sun.center_y = 600
-        self.backgroundsky_sprites.append(sun)
+        self.background_sprites.append(sun)
+
+        for x in range(-100, 1100, random.randint(50, 200)):
+            cloudsprites = ["images/cloud1.png",
+            "images/cloud2.png",
+            "images/cloud3.png"]
+            clouds = arcade.Sprite(random.choice(cloudsprites), 0.07)
+            clouds.center_x = x
+            clouds.center_y = random.randint(400, SCREEN_HEIGHT)
+            self.background_sprites.append(clouds)
 
 
         #give users instructions
@@ -222,6 +231,10 @@ class GamePlay(arcade.View):
         self.bullet_list.update()
         self.enemy_list.update()
         self.background_sprites.update()
+
+        for sun in self.background_sprites:
+            sun.center_x -= (0.1)
+
 
         for bullet in self.bullet_list:
             hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
