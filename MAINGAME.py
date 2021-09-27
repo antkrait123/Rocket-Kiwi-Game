@@ -33,6 +33,21 @@ class Kiwi(arcade.Sprite):
         if self.center_x > SCREEN_WIDTH -25:
             self.center_x = SCREEN_WIDTH -25
         
+class Cloud:
+    def __init__(self, center_x, center_y, size):
+        self.center_x = center_x
+        self.center_y = center_y
+        self.size = size
+        self.speed = self.size / 20
+
+    def update(self):
+        self.center_x -= self.speed
+    
+    def draw(self):
+        arcade.draw_circle_filled(self.center_x, self.center_y, self.size, arcade.color.WHITE)
+        arcade.draw_circle_filled(self.center_x-self.size, self.center_y, self.size, arcade.color.WHITE)
+        arcade.draw_circle_filled(self.center_x+self.size, self.center_y, self.size, arcade.color.WHITE)
+        arcade.draw_circle_filled(self.center_x -self.size/3, self.center_y + self.size/1.5, self.size, arcade.color.WHITE)
 
 
 class MenuScreen(arcade.View):
@@ -75,6 +90,9 @@ class GamePlay(arcade.View):
         self.gspeed = None
         self.background_sprites = None
         self.backgroundsky_sprites = None
+        self.clouds = []
+        for i in range(10):
+            self.make_cloud()
 
         #load sounds & tunes
         self.shoot_sound = arcade.load_sound("Sounds/pop.mp3")
@@ -111,10 +129,9 @@ class GamePlay(arcade.View):
             wall.center_y = 500
             self.wall_list.append(wall)
 
-        enemy = arcade.Sprite("images/possum.png", 0.33)
-        enemy.center_x = x
-        enemy.center_y = 200
-        self.enemy_list.append(enemy)
+        self.spawn_possum()
+        self.spawn_possum()
+        self.spawn_possum()
 
         #manualy place a tree
         '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
@@ -127,14 +144,14 @@ class GamePlay(arcade.View):
         sun.center_y = 600
         self.background_sprites.append(sun)
 
-        for x in range(-100, 1100, random.randint(50, 200)):
-            cloudsprites = ["images/cloud1.png",
-            "images/cloud2.png",
-            "images/cloud3.png"]
-            clouds = arcade.Sprite(random.choice(cloudsprites), 0.07)
-            clouds.center_x = x
-            clouds.center_y = random.randint(400, SCREEN_HEIGHT)
-            self.background_sprites.append(clouds)
+        # for x in range(-100, 1100, random.randint(50, 200)):
+        #     cloudsprites = ["images/cloud1.png",
+        #     "images/cloud2.png",
+        #     "images/cloud3.png"]
+        #     clouds = arcade.Sprite(random.choice(cloudsprites), random.uniform(0.1, 0.25))
+        #     clouds.center_x = x
+        #     clouds.center_y = random.randint(400, SCREEN_HEIGHT)
+        #     self.background_sprites.append(clouds)
 
 
         #give users instructions
@@ -184,6 +201,8 @@ class GamePlay(arcade.View):
         arcade.start_render()
         arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
         self.background_sprites.draw()
+        for cloud in self.clouds:
+            cloud.draw()
         #arcade.draw_lrtb_rectangle_filled(300, 350, 200, 150, BLACK)
         self.wall_list.draw()
         self.player_list.draw()
@@ -194,7 +213,15 @@ class GamePlay(arcade.View):
         arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 50, arcade.color.BLACK, font_size = 35 )
 
 
-            
+    def make_cloud(self):
+        cloud = Cloud(random.randint(SCREEN_WIDTH, 2*SCREEN_WIDTH), random.randint(2*SCREEN_HEIGHT/3, SCREEN_HEIGHT), random.randint(15, 50))
+        self.clouds.append(cloud)
+
+    def spawn_possum(self):
+        enemy = arcade.Sprite("images/possum.png", 0.33)
+        enemy.center_x = random.randint(SCREEN_WIDTH, SCREEN_WIDTH*3)
+        enemy.center_y = random.randint(0, SCREEN_HEIGHT)
+        self.enemy_list.append(enemy)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
@@ -231,6 +258,12 @@ class GamePlay(arcade.View):
         self.bullet_list.update()
         self.enemy_list.update()
         self.background_sprites.update()
+        for cloud in self.clouds:
+            cloud.update()
+            if cloud.center_x < -100:
+                self.clouds.remove(cloud)
+                self.make_cloud()
+
 
         for sun in self.background_sprites:
             sun.center_x -= (0.1)
@@ -243,13 +276,11 @@ class GamePlay(arcade.View):
                 bullet.remove_from_sprite_lists()
                 for enemy in hit_list:
                     enemy.kill()
-                    new_enemy = arcade.Sprite("images/possum.png", 0.33)
-                    new_enemy.center_x = 3000
-                    new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
-                    self.enemy_list.append(new_enemy)
+                    chance = random.random()
+                    for i in range(1+math.floor(3*chance)):
+                        self.spawn_possum()
                     self.score += 10
                 
-
             if bullet.center_x > SCREEN_WIDTH - 10 or bullet.center_y > SCREEN_HEIGHT:
                 bullet.remove_from_sprite_lists()
             
@@ -291,10 +322,11 @@ class GamePlay(arcade.View):
 
         for enemy in self.enemy_list:
             enemy.center_x -= (self.gspeed)
+            # enemy.center_y = arcade.utils.lerp(enemy.center_y, self.kiwi_sprite.center_y, 0.02) 
             if enemy.center_x < -50:
                 enemy.kill()
                 new_enemy = arcade.Sprite("images/possum.png", 0.33)
-                new_enemy.center_x = 4000
+                new_enemy.center_x = 4000 / (self.score/200)
                 new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
                 self.enemy_list.append(new_enemy)
         
