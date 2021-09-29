@@ -11,6 +11,7 @@ SCREEN_TITLE = "ROCKET KIWI"
 MOVEMENT_SPEED = 8
 BULLET_SPEED = 10
 
+
 #background_images = []
 
 #SPRITE_SCALING_BOX  = 0.1
@@ -91,6 +92,7 @@ class GamePlay(arcade.View):
         self.background_sprites = None
         self.backgroundsky_sprites = None
         self.clouds = []
+        self.num_possums = 3
         for i in range(10):
             self.make_cloud()
 
@@ -132,6 +134,7 @@ class GamePlay(arcade.View):
         self.spawn_possum()
         self.spawn_possum()
         self.spawn_possum()
+
 
         #manualy place a tree
         '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
@@ -223,6 +226,7 @@ class GamePlay(arcade.View):
         enemy.center_y = random.randint(0, SCREEN_HEIGHT)
         self.enemy_list.append(enemy)
 
+
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
             self.kiwi_sprite.change_y = MOVEMENT_SPEED
@@ -266,7 +270,10 @@ class GamePlay(arcade.View):
 
 
         for sun in self.background_sprites:
-            sun.center_x -= (0.1)
+            sun.center_x -= (0.15)
+        if sun.center_x == -40:
+            moon.draw()
+            moon.center_x -=(0.15)
 
 
         for bullet in self.bullet_list:
@@ -277,8 +284,7 @@ class GamePlay(arcade.View):
                 for enemy in hit_list:
                     enemy.kill()
                     chance = random.random()
-                    for i in range(1+math.floor(3*chance)):
-                        self.spawn_possum()
+                    self.spawn_possum()
                     self.score += 10
                 
             if bullet.center_x > SCREEN_WIDTH - 10 or bullet.center_y > SCREEN_HEIGHT:
@@ -325,10 +331,7 @@ class GamePlay(arcade.View):
             # enemy.center_y = arcade.utils.lerp(enemy.center_y, self.kiwi_sprite.center_y, 0.02) 
             if enemy.center_x < -50:
                 enemy.kill()
-                new_enemy = arcade.Sprite("images/possum.png", 0.33)
-                new_enemy.center_x = 4000 / (self.score/200)
-                new_enemy.center_y = random.randint(0, SCREEN_HEIGHT)
-                self.enemy_list.append(new_enemy)
+                self.spawn_possum()
         
         enemy_hit_list = arcade.check_for_collision_with_list(self.kiwi_sprite, self.enemy_list)
         for enemy in enemy_hit_list:
@@ -337,6 +340,9 @@ class GamePlay(arcade.View):
         if self.kiwi_sprite.center_x < -20:
             self.game_over()
 
+        self.num_possums = math.floor(self.score/100) + 3
+        while len(self.enemy_list) < self.num_possums:
+            self.spawn_possum()
 
         self.gspeed += delta_time/10
         print(self.gspeed)
