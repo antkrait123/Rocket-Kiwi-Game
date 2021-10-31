@@ -215,6 +215,10 @@ class GamePlay(arcade.View):
         self.kiwi_sprite.draw()
         arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 50, arcade.color.BLACK, font_size = 35 )
 
+    def day_night(self):
+        pass
+        
+
 
     def make_cloud(self):
         cloud = Cloud(random.randint(SCREEN_WIDTH, 2*SCREEN_WIDTH), random.randint(2*SCREEN_HEIGHT/3, SCREEN_HEIGHT), random.randint(15, 50))
@@ -273,6 +277,7 @@ class GamePlay(arcade.View):
             sun.center_x -= (0.15)
         if sun.center_x == -40:
             moon.draw()
+            
             moon.center_x -=(0.15)
 
 
