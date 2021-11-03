@@ -21,12 +21,12 @@ BULLET_SPEED = 10
 #SPRITE_SCALING_SMALLROCK = 0.1
 
 class Kiwi(arcade.Sprite):
-    def __init__(self, image):
+    def __init__(self, image):  #initialises the parent 
         scaling_factor = 0.1
 
         super().__init__(image, scaling_factor)
     
-    def update(self):
+    def update(self):  #sets x and y boundries for the kiwi sprite
         if self.center_y > SCREEN_HEIGHT - 25:
             self.center_y = SCREEN_HEIGHT -25
         if self.center_y < 25:
@@ -34,50 +34,50 @@ class Kiwi(arcade.Sprite):
         if self.center_x > SCREEN_WIDTH -25:
             self.center_x = SCREEN_WIDTH -25
         
-class Cloud:
-    def __init__(self, center_x, center_y, size):
+class Cloud:  
+    def __init__(self, center_x, center_y, size): #sets up the clouds function
         self.center_x = center_x
         self.center_y = center_y
         self.size = size
         self.speed = self.size / 20
 
-    def update(self):
+    def update(self): #sets the relational speed of the clouds
         self.center_x -= self.speed
     
-    def draw(self):
+    def draw(self): #draws the clouds in the sky, gives size, colour and shape
         arcade.draw_circle_filled(self.center_x, self.center_y, self.size, arcade.color.WHITE)
         arcade.draw_circle_filled(self.center_x-self.size, self.center_y, self.size, arcade.color.WHITE)
         arcade.draw_circle_filled(self.center_x+self.size, self.center_y, self.size, arcade.color.WHITE)
         arcade.draw_circle_filled(self.center_x -self.size/3, self.center_y + self.size/1.5, self.size, arcade.color.WHITE)
 
 
-class MenuScreen(arcade.View):
+class MenuScreen(arcade.View): #this is the start screen for the game
     def __init__(self):
         super().__init__()
-        #self.music_sound = arcade.load_sound("")
+        '''self.music_sound = arcade.load_sound("")'''
         
 
-    def on_show(self):
+    def on_show(self): #setting the background colour
         arcade.set_background_color(RED)
     
-    def on_draw(self):
+    def on_draw(self): #puts the text on the start screen
         arcade.start_render()
         arcade.draw_text("MENU" , SCREEN_WIDTH/2, SCREEN_HEIGHT/2, arcade.color.BLACK, font_size = 50, anchor_x="center")
         arcade.draw_text("Click here to start...", SCREEN_WIDTH/2 + 10, SCREEN_HEIGHT/2 - 50, arcade.color.BLACK, font_size = 20, anchor_x="center")
 
-    def on_mouse_press(self, x, y, button, modifiers):
+    def on_mouse_press(self, x, y, button, modifiers): #starts the game play when mouse is clicked
         game_view = GamePlay()
         game_view.setup()
         game_view.on_draw()
         self.window.show_view(game_view)
-        #arcade.play_sound(self.music_sound)
+        '''arcade.play_sound(self.music_sound)'''
 
 
 
 
 class GamePlay(arcade.View):
 
-    def __init__(self):
+    def __init__(self): #initialises the parent, sets None types and a few varaibles
         super().__init__()
         self.player_list = None
         self.enemy_list = None
@@ -99,29 +99,30 @@ class GamePlay(arcade.View):
         #load sounds & tunes
         self.shoot_sound = arcade.load_sound("Sounds/pop.mp3")
         self.endgame_noise = arcade.load_sound("Sounds/Game_over_sound.mp3")
-        #self.crash_sound = arcade.load_sound("")
+        '''self.crash_sound = arcade.load_sound("")'''
 
           
-    def setup(self):
-        #arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 20, anchor_x="center")
-        #arcade.draw_text("Use [SPACE] to shoot", 100, 550, arcade.color.BLACK, font_size = 20, anchor_x="center")
+    def setup(self): #setup
+        '''arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 20, anchor_x="center")'''
+        '''arcade.draw_text("Use [SPACE] to shoot", 100, 550, arcade.color.BLACK, font_size = 20, anchor_x="center")'''
+        #set spritelists
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
+        self.background_sprites = arcade.SpriteList()
+        self.backgroundsky_sprites = arcade.SpriteList()
 
+        #set the kiwi sprites starting position
         self.kiwi_sprite.center_x = SCREEN_WIDTH/2
         self.kiwi_sprite.center_y = SCREEN_HEIGHT/2
 
         self.player_list.append(self.kiwi_sprite)
 
-        self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list)
+        self.physics_engine = arcade.PhysicsEngineSimple(self.kiwi_sprite, self.wall_list) #creates the physics engine to controll collisions
 
-        self.background_sprites = arcade.SpriteList()
-        self.backgroundsky_sprites = arcade.SpriteList()
-
-        self.score = 0
-        self.gspeed = 3
+        self.score = 0 #sets the score varible to 0
+        self.gspeed = 3 #sets the gamespeed variable to 3
         
 
         #place boxes continually in sequence
@@ -131,10 +132,10 @@ class GamePlay(arcade.View):
             wall.center_y = 500
             self.wall_list.append(wall)
 
-        self.spawn_possum()
-        self.spawn_possum()
-        self.spawn_possum()
-
+        #create 3 possums
+        for i in range(3*10**2):
+            self.spawn_possum()
+       
 
         #manualy place a tree
         '''tree = arcade.Sprite("images/Nikau_tree.png", 0.2)
@@ -142,22 +143,14 @@ class GamePlay(arcade.View):
         tree.center_y = 200
         self.background_sprites.append(tree)'''
 
+        #set the sun in the sky
         sun = arcade.Sprite("images/sun.png", 0.06)
         sun.center_x = 980
         sun.center_y = 600
         self.background_sprites.append(sun)
 
-        # for x in range(-100, 1100, random.randint(50, 200)):
-        #     cloudsprites = ["images/cloud1.png",
-        #     "images/cloud2.png",
-        #     "images/cloud3.png"]
-        #     clouds = arcade.Sprite(random.choice(cloudsprites), random.uniform(0.1, 0.25))
-        #     clouds.center_x = x
-        #     clouds.center_y = random.randint(400, SCREEN_HEIGHT)
-        #     self.background_sprites.append(clouds)
 
-
-        #give users instructions
+        #give user game instructions
         '''instructions = arcade.draw_text("Use arrow keys to move < ^ >" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
         instructions.center_x = 1000
         instructions. center_y = 650
@@ -166,9 +159,7 @@ class GamePlay(arcade.View):
         instructions2 = arcade.draw_text("Use [SPACE] to shoot" , 100, 600, arcade.color.BLACK, font_size = 30, anchor_x="center")
         instructions2.center_x = 1000
         instructions2. center_y = 590
-        self.wall_list.append(instructions2)'''
-        
-       
+        self.wall_list.append(instructions2)''' 
 
         # place boxes at specified co-ordinates   
     ''' coordinate_list = [[400, 500],
@@ -182,7 +173,7 @@ class GamePlay(arcade.View):
             wall.center_y = coordinate[1]
             self.wall_list.append(wall)'''
 
-
+        #generate random box shapes
     '''def make_l_shape(self, x, y):
         box_size = 51.2
         wall = arcade.Sprite("images/box.png", SPRITE_SCALING_BOX)
@@ -200,47 +191,51 @@ class GamePlay(arcade.View):
             self.wall_list.append(wall) '''
 
 
+    #draw everything
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN)
-        self.background_sprites.draw()
+        arcade.set_background_color(SKY_BLUE) #creates the sky
+        arcade.draw_lrtb_rectangle_filled(0 ,1080, 200, 0, GREEN) #creates the grass
+        self.background_sprites.draw() #draws sun and clouds
         for cloud in self.clouds:
             cloud.draw()
-        #arcade.draw_lrtb_rectangle_filled(300, 350, 200, 150, BLACK)
+        
+        #draw spritelists
         self.wall_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
         self.bullet_list.draw()
-        arcade.set_background_color(SKY_BLUE)
         self.kiwi_sprite.draw()
+        
+        #draw score function in top right corner
         arcade.draw_text(f"Score: {self.score}", 10, SCREEN_HEIGHT - 50, arcade.color.BLACK, font_size = 35 )
 
+
     def day_night(self):
-        pass
-        
+        pass       
 
-
-    def make_cloud(self):
+    def make_cloud(self): #function that makes the clouds random in size and location
         cloud = Cloud(random.randint(SCREEN_WIDTH, 2*SCREEN_WIDTH), random.randint(2*SCREEN_HEIGHT/3, SCREEN_HEIGHT), random.randint(15, 50))
         self.clouds.append(cloud)
 
-    def spawn_possum(self):
+    def spawn_possum(self): #function that draws the possums at random co-ordinates
         enemy = arcade.Sprite("images/possum.png", 0.33)
         enemy.center_x = random.randint(SCREEN_WIDTH, SCREEN_WIDTH*3)
         enemy.center_y = random.randint(0, SCREEN_HEIGHT)
         self.enemy_list.append(enemy)
 
 
+    #user keyboard controll and functions
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP:
+        if key == arcade.key.UP: #moves kiwi up
             self.kiwi_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.DOWN: #moves kiwi down
             self.kiwi_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.LEFT: #moves kiwi left
             self.kiwi_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.RIGHT: #moves kiwi right
             self.kiwi_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.SPACE:
+        elif key == arcade.key.SPACE: #shoot bullet function
             arcade.play_sound(self.shoot_sound)
             bullet = arcade.Sprite("images/pellet.png", 0.0075)
             start_x = self.kiwi_sprite.center_x + 25
@@ -250,8 +245,6 @@ class GamePlay(arcade.View):
             bullet.change_x =  BULLET_SPEED
             self.bullet_list.append(bullet)
 
-
-
     def on_key_release(self, key, modifiers):
         if key == arcade.key.UP or key == arcade.key.DOWN:
             self.kiwi_sprite.change_y = 0
@@ -259,8 +252,8 @@ class GamePlay(arcade.View):
             self.kiwi_sprite.change_x = 0
 
 
-
-    def on_update(self, delta_time):
+    #update function
+    def on_update(self, delta_time): #updates the gameplay 60 times every second
         self.kiwi_sprite.update()
         self.physics_engine.update()
         self.bullet_list.update()
@@ -354,7 +347,7 @@ class GamePlay(arcade.View):
 
     
     def game_over(self):
-        arcade.play_sound(self.endgame_noise)
+        """arcade.play_sound(self.endgame_noise)"""
         arcade.get_window().show_view(EndScreen(self.score))
 
 
